@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thailand eSIM Competitive Landscape | Exp-Pric-006</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; }
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap');
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState } = React;
+
+// ═══════════════════════════════════════════
+// DATA LAYER
+// ═══════════════════════════════════════════
+
+const COLORS = {
+  holafly: { primary: "#E6495C", bg: "#FDF2F3", light: "#FAE0E3", text: "#B91C30" },
+  airalo: { primary: "#F17156", bg: "#FEF0ED", light: "#FDDDD7", text: "#C4452E" },
+  saily: { primary: "#D4B800", bg: "#FFFDE6", light: "#FFF9A3", text: "#8A7600", dot: "#FFF503" },
+  nomad: { primary: "#06B6D4", bg: "#ECFEFF", light: "#CFFAFE", text: "#0E7490" },
+  yesim: { primary: "#F97316", bg: "#FFF7ED", light: "#FFEDD5", text: "#C2410C" },
+  ais: { primary: "#00A651" },
+  truemove: { primary: "#E3001B" },
+  dtac: { primary: "#00AEEF" },
+};
+
+const FONT = "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const FX_THB = 36.70;
+const BRAND_NAMES = { airalo: "Airalo", saily: "Saily", nomad: "Nomad", yesim: "Yesim" };
+const BRAND_ORDER = ["airalo", "saily", "nomad", "yesim"];
+
+const FUP_POLICIES = [
+  { brand: "holafly", name: "Holafly", daily: "12 GB", after_en: "Continues unlimited at reduced speed", after_es: "Continua ilimitado a velocidad reducida", network: "AIS" },
+  { brand: "airalo", name: "Airalo", daily: "3 GB", after_en: "Hard cap to 1 Mbps", after_es: "Cap duro a 1 Mbps", network: "DTAC" },
+  { brand: "saily", name: "Saily", daily: "5 GB", after_en: "Hard cap to 1 Mbps", after_es: "Cap duro a 1 Mbps", network: "AIS" },
+  { brand: "nomad", name: "Nomad", daily: "2 GB", after_en: "Hard cap to 1 Mbps", after_es: "Cap duro a 1 Mbps", network: "N/D" },
+  { brand: "yesim", name: "Yesim", daily: "\u2014", after_en: "No self-imposed FUP. Local network may throttle", after_es: "Sin FUP propia. La red local puede limitar", network: "N/D" },
+];
+
+const HOLAFLY = [
+  [1,3.79],[2,7.58],[3,11.37],[4,14.90],[5,18.90],[6,22.90],[7,26.90],[8,28.90],[9,31.90],[10,33.90],
+  [11,36.90],[12,39.90],[13,41.90],[14,43.90],[15,46.90],[16,48.90],[17,49.90],[18,51.90],[19,54.90],[20,56.90],
+  [21,58.90],[22,59.90],[23,60.90],[24,61.90],[25,62.90],[26,63.90],[27,64.90],[28,65.90],[29,66.90],[30,68.90],
+  [31,69.90],[32,70.90],[33,71.90],[34,72.90],[35,73.90],[36,74.90],[37,75.90],[38,76.90],[39,77.90],[40,78.90],
+  [41,79.90],[42,80.90],[43,81.90],[44,82.90],[45,83.90],[46,84.90],[47,85.90],[48,86.90],[49,87.90],[50,88.90],
+  [51,89.90],[52,90.90],[53,91.90],[54,92.90],[55,93.90],[56,94.90],[57,95.90],[58,96.90],[59,97.90],[60,98.90],
+  [61,99.90],[62,100.90],[63,101.90],[64,102.90],[65,103.90],[66,104.90],[67,105.90],[68,106.90],[69,107.90],[70,108.90],
+  [71,109.90],[72,110.90],[73,111.90],[74,112.90],[75,113.90],[76,114.90],[77,115.90],[78,116.90],[79,117.90],[80,118.90],
+  [81,119.90],[82,120.90],[83,121.90],[84,122.90],[85,123.90],[86,124.90],[87,125.90],[88,126.90],[89,127.90],[90,128.90],
+];
+
+const UNLIMITED = {
+  airalo: [{days:3,eur:10.50},{days:5,eur:17.00},{days:7,eur:24.00},{days:10,eur:31.00},{days:15,eur:34.50},{days:30,eur:43.00}],
+  saily: [{days:5,eur:17.58},{days:7,eur:26.84},{days:10,eur:32.40},{days:15,eur:45.36},{days:20,eur:55.55},{days:25,eur:61.10},{days:30,eur:66.66}],
+  nomad: [{days:10,eur:11.86},{days:15,eur:16.09},{days:30,eur:27.94}],
+  yesim: [{days:1,eur:7.00},{days:7,eur:18.00},{days:15,eur:27.00},{days:30,eur:38.00}],
+};
+
+const GLOBAL_CAPPED = [
+  {comp:"airalo",gb:1,days:3,eur:3.50},{comp:"airalo",gb:3,days:3,eur:5.00},
+  {comp:"airalo",gb:3,days:7,eur:5.50},{comp:"airalo",gb:5,days:7,eur:6.50},{comp:"airalo",gb:10,days:7,eur:9.00},
+  {comp:"airalo",gb:5,days:15,eur:7.00},{comp:"airalo",gb:10,days:15,eur:9.50},{comp:"airalo",gb:20,days:15,eur:15.50},
+  {comp:"airalo",gb:5,days:30,eur:7.00},{comp:"airalo",gb:10,days:30,eur:10.00},{comp:"airalo",gb:20,days:30,eur:16.00},{comp:"airalo",gb:50,days:30,eur:24.00},
+  {comp:"saily",gb:1,days:7,eur:2.77},{comp:"saily",gb:3,days:30,eur:5.55},{comp:"saily",gb:5,days:30,eur:7.40},{comp:"saily",gb:10,days:30,eur:10.17},{comp:"saily",gb:20,days:30,eur:18.51},
+  {comp:"nomad",gb:1,days:7,eur:4.23},{comp:"nomad",gb:50,days:10,eur:7.62},{comp:"nomad",gb:10,days:30,eur:10.16},
+  {comp:"yesim",gb:10,days:30,eur:11.00},{comp:"yesim",gb:20,days:30,eur:17.00},{comp:"yesim",gb:30,days:30,eur:23.00},
+];
+
+const LOCAL_OPS = [
+  {provider:"AIS",plan:"1 GB Pay-As-You-Go",dataGb:"1",validity:1,thb:49,eur:1.34,friction:"MEDIUM",notes_en:"10 Mbps. Local calls 1.07 THB/min.",notes_es:"10 Mbps. Llamadas locales 1.07 THB/min."},
+  {provider:"AIS",plan:"Unlimited Tourist 5d",dataGb:"Unlimited",validity:5,thb:399,eur:10.87,friction:"MEDIUM",notes_en:"5G. Passport + selfie + address. AIS calls + 100 THB credit.",notes_es:"5G. Pasaporte + selfie + direccion. Llamadas AIS + 100 THB credito."},
+  {provider:"AIS",plan:"Unlimited Tourist 8d",dataGb:"Unlimited",validity:8,thb:499,eur:13.60,friction:"MEDIUM",notes_en:"5G. Passport + selfie + address. AIS calls + 100 THB credit.",notes_es:"5G. Pasaporte + selfie + direccion. Llamadas AIS + 100 THB credito."},
+  {provider:"AIS",plan:"Unlimited Tourist 15d",dataGb:"Unlimited",validity:15,thb:699,eur:19.05,friction:"MEDIUM",notes_en:"5G. Passport + selfie + address. AIS calls + 100 THB credit.",notes_es:"5G. Pasaporte + selfie + direccion. Llamadas AIS + 100 THB credito."},
+  {provider:"AIS",plan:"Unlimited Tourist 30d",dataGb:"Unlimited",validity:30,thb:1199,eur:32.67,friction:"MEDIUM",notes_en:"5G. Passport + selfie + address. AIS calls + 100 THB credit.",notes_es:"5G. Pasaporte + selfie + direccion. Llamadas AIS + 100 THB credito."},
+  {provider:"AIS",plan:"Unlimited Tourist 60d",dataGb:"Unlimited",validity:60,thb:1599,eur:43.57,friction:"MEDIUM",notes_en:"5G. Passport + selfie + address. AIS calls + 100 THB credit.",notes_es:"5G. Pasaporte + selfie + direccion. Llamadas AIS + 100 THB credito."},
+  {provider:"TrueMove H",plan:"Data-Only Tourist 10d",dataGb:"Unlimited",validity:10,thb:349,eur:9.51,friction:"MEDIUM",notes_en:"5G. Data only. Passport + selfie.",notes_es:"5G. Solo datos. Pasaporte + selfie."},
+  {provider:"TrueMove H",plan:"Unlimited Tourist 8d",dataGb:"Unlimited",validity:8,thb:499,eur:13.60,friction:"MEDIUM",notes_en:"5G. Unlimited local calls + 100 THB intl. Passport + selfie.",notes_es:"5G. Llamadas locales ilimitadas + 100 THB intl. Pasaporte + selfie."},
+  {provider:"TrueMove H",plan:"Unlimited Tourist 15d",dataGb:"Unlimited",validity:15,thb:699,eur:19.05,friction:"MEDIUM",notes_en:"5G. Unlimited local calls + 100 THB intl. Passport + selfie.",notes_es:"5G. Llamadas locales ilimitadas + 100 THB intl. Pasaporte + selfie."},
+  {provider:"TrueMove H",plan:"Unlimited Tourist 30d",dataGb:"Unlimited",validity:30,thb:1199,eur:32.67,friction:"MEDIUM",notes_en:"5G. Unlimited local calls + 100 THB intl. Passport + selfie.",notes_es:"5G. Llamadas locales ilimitadas + 100 THB intl. Pasaporte + selfie."},
+  {provider:"dtac",plan:"1 GB Pay-As-You-Go",dataGb:"1",validity:1,thb:49,eur:1.34,friction:"MEDIUM",notes_en:"5G. Unlimited dtac calls. Passport required.",notes_es:"5G. Llamadas dtac ilimitadas. Requiere pasaporte."},
+  {provider:"dtac",plan:"15 GB Tourist 8d",dataGb:"15",validity:8,thb:299,eur:8.15,friction:"MEDIUM",notes_en:"5G then reduced speed. Passport required.",notes_es:"5G, luego velocidad reducida. Requiere pasaporte."},
+  {provider:"dtac",plan:"50 GB Tourist 10d",dataGb:"50",validity:10,thb:349,eur:9.51,friction:"MEDIUM",notes_en:"5G then reduced speed. Passport required.",notes_es:"5G, luego velocidad reducida. Requiere pasaporte."},
+  {provider:"dtac",plan:"Happy Infinite 8d",dataGb:"Unlimited",validity:8,thb:449,eur:12.23,friction:"MEDIUM",notes_en:"5G. Calls + promo credit. Passport required.",notes_es:"5G. Llamadas + credito promo. Requiere pasaporte."},
+  {provider:"dtac",plan:"30 GB Tourist 15d",dataGb:"30",validity:15,thb:599,eur:16.32,friction:"MEDIUM",notes_en:"5G then reduced speed. Passport required.",notes_es:"5G, luego velocidad reducida. Requiere pasaporte."},
+  {provider:"dtac",plan:"Happy Infinite 15d",dataGb:"Unlimited",validity:15,thb:699,eur:19.05,friction:"MEDIUM",notes_en:"5G. Calls + promo credit. Passport required.",notes_es:"5G. Llamadas + credito promo. Requiere pasaporte."},
+  {provider:"dtac",plan:"Happy Infinite 30d",dataGb:"Unlimited",validity:30,thb:1199,eur:32.67,friction:"MEDIUM",notes_en:"5G. Calls + promo credit. Passport required.",notes_es:"5G. Llamadas + credito promo. Requiere pasaporte."},
+];
+const LOCAL_BRAND_KEY = {"AIS":"ais","TrueMove H":"truemove","dtac":"dtac"};
+
+// ═══════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════
+
+const T = {
+  en: {
+    tabOverview: "Overview", tabGlobal: "Global Competitors", tabLocal: "Local Operators",
+    fxNote: "FX: 1\u20AC = $1.08 USD | 1\u20AC = 36.70 THB. Holafly does not price in THB (no fixed rate).",
+    heroTitle: "Holafly's competitive position in Thailand",
+    hero1title: "Premium justified at 1-5d",
+    hero1body: "Holafly is the only truly unlimited option (12GB/d at full speed, then continues unlimited). At 1-2d, no competitor offers unlimited. At 3-5d, the premium vs Airalo/Saily is +8-11%, justified by 4x-6x daily data.",
+    hero2title: "Premium stretched at 7-14d",
+    hero2body: "Yesim undercuts from 7d, Nomad from 10d. The premium ranges from +49% to +186% depending on competitor. Most of these competitors offer significantly less daily data, but the customer sees the price first.",
+    hero3title: "Premium exposed at 15-30d",
+    hero3body: "All 4 global competitors and all 3 local operators undercut Holafly here. Local Thai operators sell unlimited on the same AIS network at 50-60% less. Friction (passport + selfie) is the only moat.",
+    hero4title: "Structural risk: AIS direct",
+    hero4body: "Holafly resells AIS. AIS sells tourist eSIM direct for \u20AC19.05/15d vs Holafly's \u20AC46.90. Same network. The customer pays 2-3x for pre-trip convenience.",
+    zoneExclusive: "Exclusive", zoneCompetitive: "Competitive (<20%)", zoneVulnerable: "Vulnerable (\u226520%)",
+    zoneNote: "Zones computed against cheapest unlimited global competitor at each duration.",
+    bottomLine: "Holafly's Thailand pricing is defensible at short durations (1-5d) where the truly unlimited product justifies the premium. At 7d+ the gap widens and the customer has cheaper unlimited alternatives from both global eSIM providers and local Thai operators. The experiment should focus on where the premium is stretched, not where it's justified.",
+    posTitle: "Competitive position: Holafly vs global eSIM",
+    pos1: "1-2d: No competition. Holafly is the only unlimited option at these durations. Pricing power is maximum.",
+    pos2: "3-5d: Healthy premium. +8-11% vs Airalo/Saily. Holafly delivers 12GB/d at full speed (truly unlimited) vs 3-5GB/d hard caps. The premium is earned.",
+    pos3: "7d: Yesim enters at \u20AC18.00 vs Holafly \u20AC26.90 (+49%). Yesim claims no FUP. If true, the premium is harder to justify.",
+    pos4: "10-30d: Multiple competitors below Holafly. Nomad 10d at \u20AC11.86 (+186% Holafly premium). However, Nomad caps at 2GB/d. The product gap is real but invisible at point of purchase.",
+    unlimitedTitle: "Unlimited vs Unlimited: price comparison",
+    unlimitedInfo: "Unlimited plans only. Delta % = Holafly vs cheapest unlimited at each duration.",
+    keyDurations: "Key durations", allDurations: "All durations",
+    cappedTitle: "Capped alternatives: the anchoring context",
+    cappedWarning: "Not apples-to-apples. Holafly is truly unlimited. These are fixed data bundles. But they appear in the same search results, anchoring price expectations.",
+    anchorTitle: "The anchoring effect",
+    anchorText: "A traveler searching \"eSIM Thailand 7 days\" sees options from \u20AC2.77 (Saily 1GB) to \u20AC26.90 (Holafly unlimited). A 10x range. The entry price anchors perception. Holafly appears as the most expensive option, even though the fair comparison is only against other unlimited plans. The question is not \"are we expensive?\" but \"does the customer understand what they're buying?\"",
+    fupTitle: "What \"unlimited\" actually means: product comparison",
+    fupNote: "Holafly is the only provider that never cuts you off. 12GB/d at max speed, then continues unlimited at reduced speed. Competitors hard-cap to 1 Mbps after their daily limit. This is Holafly's core product advantage.",
+    globalRisks: "Risks & Opportunities",
+    riskNomad: "Nomad's 2GB/d is weak, but the customer sees the price first. At 65% cheaper, the impulse buy favors Nomad.",
+    riskYesim: "Yesim claims no self-imposed FUP. If true, it's a better product at a lower price. Needs verification.",
+    riskAnchoring: "Capped plans from \u20AC2.77 make Holafly look expensive in search results regardless of the actual product difference.",
+    oppFup: "Holafly's truly unlimited data (never cuts off) is a genuine differentiator. The opportunity is making this visible at point of purchase.",
+    oppShort: "Short durations (1-5d) are the defensible zone. Volume concentration here is strategically advantageous.",
+    oppBundle: "The 12GB/d at full speed + unlimited continuation could be repositioned as a premium tier vs competitors' limited \"unlimited\".",
+    localTitle: "Local Thai Operators",
+    localThreatTitle: "Local Threat: High",
+    localThreatAll: "All 3 operators offer eSIM",
+    localPosTitle: "Holafly vs local operators",
+    localPos1: "All three Thai operators (AIS, TrueMove H, dtac) offer tourist eSIM plans with passport + selfie activation. Friction is medium, not high.",
+    localPos2: "AIS is the same network Holafly resells. AIS sells unlimited 15d tourist eSIM for \u20AC19.05 vs Holafly \u20AC46.90 (+146%). Same network, same coverage, same speeds.",
+    localPos3: "Local plans include 5G with no disclosed daily FUP. Holafly caps at 12GB/d at full speed on the same network. The local product may actually be less restricted.",
+    localPos4: "The moat is pre-trip convenience only: Holafly works the moment you land. Local eSIM requires passport + selfie after arrival.",
+    localCustTitle: "Customer perspective",
+    localCustText: "A tourist lands at Suvarnabhumi, opens the AIS app, registers with passport + selfie, and has unlimited 5G for \u20AC19.05 for 15 days. Through Holafly, the same AIS network with 12GB/d at full speed costs \u20AC46.90. For a first-time visitor, pre-trip activation is real value. For a repeat visitor who knows the process, the premium is hard to justify.",
+    localTableTitle: "All local tourist plans",
+    localWarning: "Local operators offer 5G with no disclosed daily FUP. Holafly provides 12GB/d at full speed then unlimited at reduced speed, on the same AIS network.",
+    localRisks: "Risks & Opportunities",
+    localRisk1: "If AIS simplifies their tourist eSIM flow (one-tap, pre-trip), Holafly's convenience moat evaporates.",
+    localRisk2: "Thailand has high repeat-visitor rates. Each first-timer who discovers local eSIM is a customer permanently lost.",
+    localOpp1: "Holafly's value is strongest for the pre-trip segment: travelers who want connectivity guaranteed before boarding.",
+    localOpp2: "Owning the \"before you fly\" moment (travel content, blogs, YouTube) is more defensible than competing on price.",
+    ppdTitle: "Price Per Day curve: all unlimited providers",
+    ppdSubtitle: "Unlimited plans only (global + local). Capped alternatives not shown.",
+    ppdFooter: "Local operators converge at \u20AC1.09-1.27/day for 15-30d unlimited. Holafly sits at \u20AC2.30-3.13/day. The gap is structural: Holafly resells AIS at 2-3x the direct tourist price.",
+    methodTitle: "Methodology",
+    methodBody: [
+      "Prices collected Mar 2026 from official websites.",
+      "Saily USD converted at 1\u20AC = $1.08. Thai THB at 1\u20AC = 36.70 THB. Holafly does not price in THB (no fixed exchange rate).",
+      "\"Unlimited\" = all plans marketed as unlimited, regardless of FUP. Holafly: 12GB/d at full speed, then continues unlimited at reduced speed (never cuts off). Saily: hard cap 1Mbps from 5GB/d. Airalo: hard cap 1Mbps from 3GB/d. Nomad: hard cap 1Mbps from 2GB/d. Yesim: no self-imposed FUP.",
+      "Local: AIS, TrueMove H, dtac. All eSIM. Passport + selfie (MEDIUM friction). No disclosed daily cap. 5G.",
+      "Holafly uses AIS network. Airalo uses DTAC. Saily uses AIS.",
+      "Delta % = (Holafly \u2212 Competitor) / Competitor \u00D7 100.",
+      "Yesim variants with calls (\u20AC29/15d, \u20AC42/30d) excluded (different bundle).",
+    ],
+  },
+  es: {
+    tabOverview: "Resumen", tabGlobal: "Competidores Globales", tabLocal: "Operadores Locales",
+    fxNote: "FX: 1\u20AC = $1.08 USD | 1\u20AC = 36.70 THB. Holafly no opera en THB (sin tasa fija).",
+    heroTitle: "Posicion competitiva de Holafly en Thailand",
+    hero1title: "Premium justificado en 1-5d",
+    hero1body: "Holafly es la unica opcion realmente ilimitada (12GB/d a maxima velocidad, luego continua ilimitado). En 1-2d, ningun competidor ofrece ilimitado. En 3-5d, la prima vs Airalo/Saily es +8-11%, justificada por 4x-6x datos diarios.",
+    hero2title: "Premium estirado en 7-14d",
+    hero2body: "Yesim es mas barato desde 7d, Nomad desde 10d. La prima va de +49% a +186% segun competidor. La mayoria ofrece menos datos diarios, pero el cliente ve el precio primero.",
+    hero3title: "Premium expuesto en 15-30d",
+    hero3body: "Los 4 competidores globales y los 3 operadores locales son mas baratos que Holafly. Los operadores tailandeses venden ilimitado en la misma red AIS a 50-60% menos. La friccion (pasaporte + selfie) es el unico foso.",
+    hero4title: "Riesgo estructural: AIS directo",
+    hero4body: "Holafly revende AIS. AIS vende eSIM turistico directo por \u20AC19.05/15d vs \u20AC46.90 de Holafly. Misma red. El cliente paga 2-3x por la conveniencia pre-viaje.",
+    zoneExclusive: "Exclusivo", zoneCompetitive: "Competitivo (<20%)", zoneVulnerable: "Vulnerable (\u226520%)",
+    zoneNote: "Zonas calculadas contra el competidor ilimitado global mas barato en cada duracion.",
+    bottomLine: "El pricing de Holafly en Thailand es defendible en duraciones cortas (1-5d) donde el producto realmente ilimitado justifica la prima. A partir de 7d la brecha se amplifica y el cliente tiene alternativas ilimitadas mas baratas tanto de proveedores eSIM globales como de operadores tailandeses locales. El experimento deberia enfocarse en donde la prima se estira, no donde se justifica.",
+    posTitle: "Posicion competitiva: Holafly vs eSIM globales",
+    pos1: "1-2d: Sin competencia. Holafly es la unica opcion ilimitada. Poder de pricing maximo.",
+    pos2: "3-5d: Prima saludable. +8-11% vs Airalo/Saily. Holafly entrega 12GB/d a maxima velocidad (realmente ilimitado) vs caps duros de 3-5GB/d. La prima esta ganada.",
+    pos3: "7d: Yesim entra a \u20AC18.00 vs Holafly \u20AC26.90 (+49%). Yesim dice no tener FUP. Si es cierto, la prima es mas dificil de justificar.",
+    pos4: "10-30d: Multiples competidores debajo de Holafly. Nomad 10d a \u20AC11.86 (prima Holafly +186%). Sin embargo, Nomad tiene cap de 2GB/d. La diferencia de producto es real pero invisible en el punto de compra.",
+    unlimitedTitle: "Ilimitado vs Ilimitado: comparacion de precios",
+    unlimitedInfo: "Solo planes ilimitados. Delta % = Holafly vs el ilimitado mas barato en cada duracion.",
+    keyDurations: "Duraciones clave", allDurations: "Todas las duraciones",
+    cappedTitle: "Alternativas con tope: el contexto de anclaje",
+    cappedWarning: "No es comparacion justa. Holafly es realmente ilimitado. Son paquetes fijos de GB. Pero aparecen en los mismos resultados, anclando expectativas de precio.",
+    anchorTitle: "El efecto ancla",
+    anchorText: "Un viajero buscando \"eSIM Thailand 7 dias\" ve opciones desde \u20AC2.77 (Saily 1GB) hasta \u20AC26.90 (Holafly ilimitado). Un rango de 10x. El precio de entrada ancla la percepcion. Holafly aparece como la opcion mas cara, aunque la comparacion justa es solo contra otros ilimitados. La pregunta no es \"estamos caros?\" sino \"el cliente entiende que esta comprando?\"",
+    fupTitle: "Que significa realmente \"ilimitado\": comparacion de producto",
+    fupNote: "Holafly es el unico proveedor que nunca te corta. 12GB/d a maxima velocidad, luego continua ilimitado a velocidad reducida. Los competidores aplican cap duro a 1 Mbps tras su limite diario. Esta es la ventaja de producto central de Holafly.",
+    globalRisks: "Riesgos y Oportunidades",
+    riskNomad: "El FUP de 2GB/d de Nomad es debil, pero el cliente ve el precio primero. A 65% mas barato, la compra impulsiva favorece a Nomad.",
+    riskYesim: "Yesim afirma no tener FUP propio. Si es cierto, es mejor producto a menor precio. Requiere verificacion.",
+    riskAnchoring: "Planes con tope desde \u20AC2.77 hacen que Holafly parezca caro en resultados de busqueda, sin importar la diferencia de producto real.",
+    oppFup: "Los datos realmente ilimitados de Holafly (nunca te corta) son un diferenciador genuino. La oportunidad es hacerlo visible en el punto de compra.",
+    oppShort: "Duraciones cortas (1-5d) son la zona defendible. Concentrar volumen aca es estrategicamente ventajoso.",
+    oppBundle: "Los 12GB/d a maxima velocidad + continuacion ilimitada podrian reposicionarse como tier premium vs el \"ilimitado\" limitado de los competidores.",
+    localTitle: "Operadores Locales Tailandeses",
+    localThreatTitle: "Amenaza Local: Alta",
+    localThreatAll: "Los 3 operadores ofrecen eSIM",
+    localPosTitle: "Holafly vs operadores locales",
+    localPos1: "Los tres operadores tailandeses (AIS, TrueMove H, dtac) ofrecen eSIM turistico con activacion pasaporte + selfie. La friccion es media, no alta.",
+    localPos2: "AIS es la misma red que revende Holafly. AIS vende ilimitado turistico 15d por \u20AC19.05 vs Holafly \u20AC46.90 (+146%). Misma red, misma cobertura, mismas velocidades.",
+    localPos3: "Los planes locales incluyen 5G sin FUP diario declarado. Holafly tiene cap de 12GB/d a maxima velocidad en la misma red. El producto local puede ser menos restrictivo.",
+    localPos4: "El foso es solo conveniencia pre-viaje: Holafly funciona al momento de aterrizar. La eSIM local requiere pasaporte + selfie tras llegar.",
+    localCustTitle: "Perspectiva del cliente",
+    localCustText: "Un turista aterriza en Suvarnabhumi, abre la app de AIS, se registra con pasaporte + selfie, y tiene 5G ilimitado por \u20AC19.05 por 15 dias. A traves de Holafly, la misma red AIS con 12GB/d a maxima velocidad cuesta \u20AC46.90. Para un primerizo, la activacion pre-viaje es valor real. Para un repetidor que conoce el proceso, la prima es dificil de justificar.",
+    localTableTitle: "Todos los planes turisticos locales",
+    localWarning: "Operadores locales ofrecen 5G sin FUP diario declarado. Holafly provee 12GB/d a maxima velocidad y luego ilimitado a velocidad reducida, en la misma red AIS.",
+    localRisks: "Riesgos y Oportunidades",
+    localRisk1: "Si AIS simplifica su flujo turistico (one-tap, compra pre-viaje), el foso de conveniencia de Holafly se evapora.",
+    localRisk2: "Thailand tiene alta tasa de visitantes repetidos. Cada primerizo que descubre la eSIM local es un cliente perdido permanentemente.",
+    localOpp1: "El valor de Holafly es mas fuerte para el segmento pre-viaje: viajeros que quieren conectividad garantizada antes de embarcar.",
+    localOpp2: "Adue\u00F1arse del momento \"antes de volar\" (contenido de viaje, blogs, YouTube) es mas defendible que competir en precio.",
+    ppdTitle: "Curva de Precio Por Dia: todos los proveedores ilimitados",
+    ppdSubtitle: "Solo ilimitados (globales + locales). Alternativas con tope no incluidas.",
+    ppdFooter: "Operadores locales convergen a \u20AC1.09-1.27/dia para 15-30d ilimitado. Holafly esta a \u20AC2.30-3.13/dia. El gap es estructural: Holafly revende AIS a 2-3x el precio turistico directo.",
+    methodTitle: "Metodologia",
+    methodBody: [
+      "Precios recopilados Mar 2026 de sitios oficiales.",
+      "Saily USD a 1\u20AC = $1.08. THB a 1\u20AC = 36.70. Holafly no opera en THB (sin tasa fija).",
+      "\"Ilimitado\" = todos los planes comercializados como ilimitados. Holafly: 12GB/d a maxima velocidad, luego continua ilimitado a velocidad reducida (nunca corta). Saily: cap 1Mbps desde 5GB/d. Airalo: cap 1Mbps desde 3GB/d. Nomad: cap 1Mbps desde 2GB/d. Yesim: sin FUP propio.",
+      "Locales: AIS, TrueMove H, dtac. Todos eSIM. Pasaporte + selfie (friccion MEDIA). Sin cap diario declarado. 5G.",
+      "Holafly usa red AIS. Airalo usa DTAC. Saily usa AIS.",
+      "Delta % = (Holafly \u2212 Competidor) / Competidor \u00D7 100.",
+      "Variantes Yesim con llamadas (\u20AC29/15d, \u20AC42/30d) excluidas (bundle diferente).",
+    ],
+  }
+};
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+
+const KEY_DURATIONS = [1,2,3,5,7,10,15,20,25,30,45,60,90];
+const fmt = (n) => n == null ? "\u2014" : "\u20AC" + n.toFixed(2);
+const calcPpd = (eur, days) => days > 0 ? eur / days : 0;
+const calcDelta = (hf, comp) => { if (hf == null || comp == null || comp === 0) return null; return ((hf - comp) / comp * 100).toFixed(1); };
+const getHfPrice = (days) => { const m = HOLAFLY.find(p => p[0] === days); return m ? m[1] : null; };
+const getCompPrice = (brand, days) => { const m = UNLIMITED[brand]?.find(p => p.days === days); return m ? m.eur : null; };
+const getCheapestUnlimited = (days) => { let c = null; Object.values(UNLIMITED).forEach(plans => { const m = plans.find(p => p.days === days); if (m && (c === null || m.eur < c)) c = m.eur; }); return c; };
+const getComparisonDurations = (expanded) => { const s = new Set(); if (expanded) HOLAFLY.forEach(p => s.add(p[0])); else HOLAFLY.forEach(p => { if (KEY_DURATIONS.includes(p[0])) s.add(p[0]); }); Object.values(UNLIMITED).forEach(plans => plans.forEach(p => s.add(p.days))); return [...s].sort((a, b) => a - b); };
+const computeZones = () => { const exclusive = [], competitive = [], vulnerable = []; HOLAFLY.forEach(([days, eur]) => { const ch = getCheapestUnlimited(days); if (ch === null) exclusive.push(days); else { const d = parseFloat(calcDelta(eur, ch)); if (d >= 20) vulnerable.push(days); else competitive.push(days); } }); return { exclusive, competitive, vulnerable }; };
+
+// ═══════════════════════════════════════════
+// SHARED COMPONENTS
+// ═══════════════════════════════════════════
+
+const thS = { padding: "8px 6px", textAlign: "center", fontSize: 11, fontWeight: 600, color: "#475569", borderBottom: "2px solid #e2e8f0", fontFamily: FONT };
+const tdS = { padding: "7px 6px", textAlign: "center", fontSize: 11, fontFamily: FONT };
+
+const DeltaBadge = ({ value }) => {
+  if (value === null || value === undefined) return <span style={{ color: "#d1d5db", fontSize: 10 }}>{"\u2014"}</span>;
+  const n = parseFloat(value);
+  const color = n > 20 ? "#dc2626" : n > 10 ? "#ea580c" : n > 0 ? "#d97706" : n > -5 ? "#65a30d" : "#16a34a";
+  const bg = n > 20 ? "#fef2f2" : n > 10 ? "#fff7ed" : n > 0 ? "#fffbeb" : n > -5 ? "#f7fee7" : "#f0fdf4";
+  return <span style={{ fontSize: 9, fontWeight: 600, color, background: bg, padding: "2px 5px", borderRadius: 4, whiteSpace: "nowrap", display: "inline-block" }}>{n > 0 ? "\u25B2" : "\u25BC"} {Math.abs(n).toFixed(1)}%</span>;
+};
+
+const BrandDot = ({ brand }) => {
+  const c = brand === "saily" ? COLORS.saily.dot : (COLORS[brand]?.primary || "#999");
+  return <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: c, marginRight: 5, verticalAlign: "middle", border: brand === "saily" ? "1px solid #B8A000" : "none", boxSizing: "border-box" }} />;
+};
+
+const FrictionBadge = ({ level }) => {
+  const s = { HIGH: { c: "#dc2626", bg: "#fef2f2", l: "High" }, MEDIUM: { c: "#d97706", bg: "#fffbeb", l: "Medium" }, LOW: { c: "#16a34a", bg: "#f0fdf4", l: "Low" } }[level] || { c: "#16a34a", bg: "#f0fdf4", l: "Low" };
+  return <span style={{ fontSize: 9, fontWeight: 600, color: s.c, background: s.bg, padding: "2px 6px", borderRadius: 4 }}>{s.l}</span>;
+};
+
+function ZoneCard({ title, days, color, bg }) {
+  if (!days || !days.length) return null;
+  const sorted = [...days].sort((a, b) => a - b);
+  const ranges = []; let st = sorted[0], en = sorted[0];
+  for (let i = 1; i < sorted.length; i++) { if (sorted[i] === en + 1) en = sorted[i]; else { ranges.push(st === en ? st + "d" : st + "-" + en + "d"); st = en = sorted[i]; } }
+  ranges.push(st === en ? st + "d" : st + "-" + en + "d");
+  return (
+    <div style={{ flex: 1, minWidth: 120, padding: "10px 12px", borderRadius: 8, background: bg, border: "1px solid " + color + "22", fontFamily: FONT }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>{title}</div>
+      <div style={{ fontSize: 11, color: "#334155" }}>{ranges.join(", ")}</div>
+      <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>{days.length} dur.</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// TAB 1: OVERVIEW
+// ═══════════════════════════════════════════
+
+function OverviewTab({ t }) {
+  const zones = computeZones();
+  const heroCards = [
+    { title: t.hero1title, body: t.hero1body, color: "#059669", border: "#059669", icon: "\u2705" },
+    { title: t.hero2title, body: t.hero2body, color: "#d97706", border: "#d97706", icon: "\u26A0\uFE0F" },
+    { title: t.hero3title, body: t.hero3body, color: "#dc2626", border: "#dc2626", icon: "\uD83D\uDD34" },
+    { title: t.hero4title, body: t.hero4body, color: "#7c3aed", border: "#7c3aed", icon: "\u26A1" },
+  ];
+  return (
+    <div>
+      <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", color: "#fff", padding: "20px 24px", borderRadius: 12, marginBottom: 16, fontFamily: FONT }}>
+        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 16, letterSpacing: -0.3 }}>{t.heroTitle}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          {heroCards.map((c, i) => (
+            <div key={i} style={{ padding: "14px 16px", borderRadius: 8, background: "rgba(255,255,255,0.05)", borderLeft: "4px solid " + c.border }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: c.color, marginBottom: 4 }}>{c.icon} {c.title}</div>
+              <div style={{ fontSize: 11, color: "#cbd5e1", lineHeight: 1.6 }}>{c.body}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
+        <ZoneCard title={t.zoneExclusive} days={zones.exclusive} color="#7c3aed" bg="#f5f3ff" />
+        <ZoneCard title={t.zoneCompetitive} days={zones.competitive} color="#059669" bg="#ecfdf5" />
+        <ZoneCard title={t.zoneVulnerable} days={zones.vulnerable} color="#dc2626" bg="#fef2f2" />
+      </div>
+      <div style={{ fontSize: 10, color: "#94a3b8", marginBottom: 20, fontStyle: "italic", fontFamily: FONT }}>{t.zoneNote}</div>
+      <div style={{ background: "#fff", border: "2px solid #0f172a", borderRadius: 10, padding: "14px 18px", fontFamily: FONT }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: "#0f172a", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Bottom line</div>
+        <div style={{ fontSize: 12, color: "#334155", lineHeight: 1.7 }}>{t.bottomLine}</div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// TAB 2: GLOBAL COMPETITORS
+// ═══════════════════════════════════════════
+
+function GlobalTab({ t }) {
+  const [expanded, setExpanded] = useState(false);
+  const durations = getComparisonDurations(expanded);
+  const allCount = HOLAFLY.length;
+  const keyCount = getComparisonDurations(false).length;
+  const isEn = t === T.en;
+  return (
+    <div>
+      <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", color: "#e2e8f0", padding: "16px 20px", borderRadius: 10, marginBottom: 20, fontFamily: FONT }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 10 }}>{t.posTitle}</div>
+        {[t.pos1, t.pos2, t.pos3, t.pos4].map((txt, i) => (<div key={i} style={{ fontSize: 11, lineHeight: 1.7, marginBottom: i < 3 ? 8 : 0, paddingLeft: 4 }}>{txt}</div>))}
+      </div>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 6 }}>
+          <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", margin: 0, fontFamily: FONT }}>{t.unlimitedTitle}</h3>
+          <button onClick={() => setExpanded(!expanded)} style={{ fontSize: 10, fontWeight: 600, color: "#3b82f6", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 5, padding: "4px 10px", cursor: "pointer", fontFamily: FONT }}>
+            {expanded ? "\u25B2 " + t.keyDurations + " (" + keyCount + ")" : "\u25BC " + t.allDurations + " (" + allCount + ")"}
+          </button>
+        </div>
+        <div style={{ fontSize: 10, color: "#1e40af", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 6, padding: "6px 10px", marginBottom: 10, fontFamily: FONT }}>{t.unlimitedInfo}</div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, fontFamily: FONT }}>
+            <thead><tr>
+              <th style={{ ...thS, textAlign: "left", minWidth: 50 }}>Days</th>
+              <th style={{ ...thS, minWidth: 70, background: COLORS.holafly.bg }}><BrandDot brand="holafly" />Holafly</th>
+              <th style={{ ...thS, minWidth: 45, background: COLORS.holafly.bg, fontSize: 9 }}>PPD</th>
+              {BRAND_ORDER.map(b => <th key={b} style={{ ...thS, minWidth: 80 }}><BrandDot brand={b} />{BRAND_NAMES[b]}</th>)}
+            </tr></thead>
+            <tbody>
+              {durations.map((days, i) => {
+                const hf = getHfPrice(days); const hfPpd = hf != null ? calcPpd(hf, days) : null;
+                const hasAny = BRAND_ORDER.some(b => getCompPrice(b, days) !== null);
+                return (
+                  <tr key={days} style={{ background: i % 2 === 0 ? "#fff" : "#f8fafc", borderBottom: "1px solid #f1f5f9", borderLeft: !hasAny ? "3px solid #7c3aed" : "3px solid transparent" }}>
+                    <td style={{ ...tdS, textAlign: "left", fontWeight: 600 }}>{days}d</td>
+                    <td style={{ ...tdS, fontWeight: 600, background: i % 2 === 0 ? COLORS.holafly.bg + "66" : COLORS.holafly.bg + "33" }}>{hf != null ? fmt(hf) : "\u2014"}</td>
+                    <td style={{ ...tdS, fontSize: 9, color: "#94a3b8", background: i % 2 === 0 ? COLORS.holafly.bg + "66" : COLORS.holafly.bg + "33" }}>{hfPpd != null ? fmt(hfPpd) + "/d" : ""}</td>
+                    {BRAND_ORDER.map(b => { const comp = getCompPrice(b, days); const delta = hf != null ? calcDelta(hf, comp) : null; return <td key={b} style={tdS}>{comp != null ? <div><div>{fmt(comp)}</div><DeltaBadge value={delta} /></div> : <span style={{ color: "#d1d5db", fontSize: 10 }}>{"\u2014"}</span>}</td>; })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {(() => { const z = computeZones(); return (<div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}><ZoneCard title={t.zoneExclusive} days={z.exclusive} color="#7c3aed" bg="#f5f3ff" /><ZoneCard title={t.zoneCompetitive} days={z.competitive} color="#059669" bg="#ecfdf5" /><ZoneCard title={t.zoneVulnerable} days={z.vulnerable} color="#dc2626" bg="#fef2f2" /></div>); })()}
+      </div>
+      <div style={{ marginBottom: 24 }}>
+        <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", marginBottom: 4, fontFamily: FONT }}>{t.cappedTitle}</h3>
+        <div style={{ fontSize: 10, color: "#92400e", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 6, padding: "6px 10px", marginBottom: 12, fontFamily: FONT }}>{t.cappedWarning}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {[3,7,15,30].map(td => {
+            const hf = getHfPrice(td); const rel = GLOBAL_CAPPED.filter(p => p.days === td).sort((a, b) => a.eur - b.eur);
+            if (!rel.length) return null; const mx = hf || Math.max(...rel.map(r => r.eur));
+            return (
+              <div key={td} style={{ border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
+                <div style={{ background: "#f8fafc", padding: "8px 14px", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", fontFamily: FONT }}>{td}d</span>
+                  <span style={{ fontSize: 10, color: "#94a3b8", fontFamily: FONT }}>{rel.length + 1} options</span>
+                </div>
+                <div style={{ padding: "6px 10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", margin: "2px 0", borderRadius: 6, borderLeft: "3px solid " + COLORS.holafly.primary, background: COLORS.holafly.bg + "88" }}>
+                    <div style={{ flex: "0 0 140px" }}><span style={{ fontSize: 10, fontWeight: 600, color: COLORS.holafly.text, background: COLORS.holafly.bg, padding: "1px 5px", borderRadius: 3 }}>Holafly</span><div style={{ fontSize: 9, color: "#94a3b8", marginTop: 1 }}>Truly unlimited</div></div>
+                    <div style={{ flex: 1, height: 14 }}><div style={{ height: "100%", width: (hf/mx)*100 + "%", borderRadius: 3, background: COLORS.holafly.primary+"33", border: "1px solid " + COLORS.holafly.primary+"55" }} /></div>
+                    <div style={{ flex: "0 0 65px", textAlign: "right" }}><div style={{ fontSize: 12, fontWeight: 700, color: COLORS.holafly.text, fontFamily: FONT }}>{fmt(hf)}</div></div>
+                  </div>
+                  <div style={{ borderTop: "1px dashed #e2e8f0", margin: "6px 8px" }} />
+                  {rel.map((p, j) => {
+                    const c = COLORS[p.comp] || { primary: "#999", text: "#333", bg: "#f0f0f0" };
+                    const dc = p.comp === "saily" ? c.dot || c.primary : c.primary;
+                    return (
+                      <div key={j} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 8px", margin: "2px 0", borderRadius: 6, borderLeft: "3px solid " + dc }}>
+                        <div style={{ flex: "0 0 140px" }}><span style={{ fontSize: 10, fontWeight: 600, color: c.text, background: c.bg, padding: "1px 5px", borderRadius: 3 }}>{BRAND_NAMES[p.comp]}</span><div style={{ fontSize: 9, color: "#94a3b8", marginTop: 1 }}>{p.gb}GB</div></div>
+                        <div style={{ flex: 1, height: 14 }}><div style={{ height: "100%", width: (p.eur/mx)*100 + "%", borderRadius: 3, background: dc+"33", border: "1px solid " + dc+"55" }} /></div>
+                        <div style={{ flex: "0 0 65px", textAlign: "right" }}><div style={{ fontSize: 12, fontWeight: 700, color: "#334155", fontFamily: FONT }}>{fmt(p.eur)}</div></div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ marginTop: 14, padding: 14, borderRadius: 8, background: "linear-gradient(135deg, #1e293b 0%, #334155 100%)", color: "#fff", fontFamily: FONT }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "#fbbf24", marginBottom: 6 }}>{t.anchorTitle}</div>
+          <div style={{ fontSize: 11, color: "#e2e8f0", lineHeight: 1.6 }}>{t.anchorText}</div>
+        </div>
+      </div>
+      <div style={{ padding: 16, borderRadius: 10, marginBottom: 20, background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", color: "#fff" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: "uppercase", color: "#94a3b8", marginBottom: 4, fontFamily: FONT }}>{t.fupTitle}</div>
+        <div style={{ fontSize: 10, color: "#fbbf24", marginBottom: 10, fontFamily: FONT, lineHeight: 1.5 }}>{t.fupNote}</div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {FUP_POLICIES.map((b, i) => (
+            <div key={i} style={{ flex: "1 1 140px", minWidth: 130, padding: 12, borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "1px solid " + (b.brand === "saily" ? COLORS.saily.dot : COLORS[b.brand]?.primary || "#666") + "44" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}><BrandDot brand={b.brand} /><span style={{ fontSize: 11, fontWeight: 600, fontFamily: FONT }}>{b.name}</span></div>
+              <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: b.brand === "saily" ? COLORS.saily.dot : COLORS[b.brand]?.primary || "#fff", fontFamily: FONT }}>{b.daily}<span style={{ fontSize: 11, fontWeight: 400, color: "#94a3b8" }}>/day</span></div>
+              <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 4, fontFamily: FONT }}>{isEn ? b.after_en : b.after_es}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <PriceCurveChart t={t} showLocal={false} />
+      <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "16px 20px", marginBottom: 20, fontFamily: FONT }}>
+        <h3 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", margin: "0 0 10px 0" }}>{t.globalRisks}</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: "#dc2626", textTransform: "uppercase", marginBottom: 8 }}>Risks</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7, marginBottom: 8 }}><BrandDot brand="nomad" />{t.riskNomad}</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7, marginBottom: 8 }}><BrandDot brand="yesim" />{t.riskYesim}</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7 }}>{t.riskAnchoring}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: "#059669", textTransform: "uppercase", marginBottom: 8 }}>Opportunities</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7, marginBottom: 8 }}><BrandDot brand="holafly" />{t.oppFup}</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7, marginBottom: 8 }}>{t.oppShort}</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7 }}>{t.oppBundle}</div>
+          </div>
+        </div>
+      </div>
+      <MethodNotes t={t} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// TAB 3: LOCAL OPERATORS
+// ═══════════════════════════════════════════
+
+function LocalTab({ t }) {
+  return (
+    <div>
+      <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", color: "#e2e8f0", padding: "16px 20px", borderRadius: 10, marginBottom: 20, fontFamily: FONT }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{t.localPosTitle}</span>
+          <span style={{ fontSize: 9, fontWeight: 700, color: "#fbbf24", background: "rgba(251,191,36,0.15)", padding: "2px 8px", borderRadius: 4, textTransform: "uppercase" }}>{t.localThreatTitle}</span>
+        </div>
+        {[t.localPos1, t.localPos2, t.localPos3, t.localPos4].map((txt, i) => (<div key={i} style={{ fontSize: 11, lineHeight: 1.7, marginBottom: i < 3 ? 8 : 0, paddingLeft: 4 }}>{txt}</div>))}
+      </div>
+      <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontFamily: FONT, marginBottom: 20 }}>
+        <div style={{ fontSize: 10, fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>{t.localCustTitle}</div>
+        <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.6 }}>{t.localCustText}</div>
+      </div>
+      <div style={{ fontSize: 11, fontWeight: 600, color: "#475569", marginBottom: 4, fontFamily: FONT }}>{t.localTableTitle}</div>
+      <div style={{ fontSize: 10, color: "#92400e", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 6, padding: "6px 10px", marginBottom: 8, fontFamily: FONT }}>{t.localWarning}</div>
+      <div style={{ overflowX: "auto", marginBottom: 20 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, fontFamily: FONT }}>
+          <thead><tr>
+            <th style={{ ...thS, textAlign: "left", minWidth: 70 }}>Provider</th>
+            <th style={{ ...thS, textAlign: "left", minWidth: 80 }}>Plan</th>
+            <th style={thS}>Data</th>
+            <th style={thS}>Days</th>
+            <th style={thS}>THB</th>
+            <th style={thS}>EUR</th>
+            <th style={{ ...thS, background: COLORS.holafly.bg }}>Holafly</th>
+            <th style={thS}>Delta</th>
+            <th style={thS}>Friction</th>
+          </tr></thead>
+          <tbody>
+            {LOCAL_OPS.map((op, i) => {
+              const isU = op.dataGb === "Unlimited";
+              const hfMatch = HOLAFLY.reduce((best, [d, e]) => !best ? [d, e] : Math.abs(d - op.validity) < Math.abs(best[0] - op.validity) ? [d, e] : best, null);
+              const delta = hfMatch && op.eur > 0 ? calcDelta(hfMatch[1], op.eur) : null;
+              const bk = LOCAL_BRAND_KEY[op.provider];
+              return (
+                <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#f8fafc", borderBottom: "1px solid #f1f5f9", borderLeft: isU ? "3px solid #7c3aed" : "3px solid transparent" }}>
+                  <td style={{ ...tdS, textAlign: "left", fontWeight: 600 }}>{bk && COLORS[bk] && <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: COLORS[bk].primary, marginRight: 5, verticalAlign: "middle" }} />}{op.provider}</td>
+                  <td style={{ ...tdS, textAlign: "left", fontSize: 10 }}>{op.plan}</td>
+                  <td style={{ ...tdS, fontSize: 9, fontWeight: 600, color: isU ? "#7c3aed" : "#64748b" }}>{isU ? "\u221E" : op.dataGb + " GB"}</td>
+                  <td style={tdS}>{op.validity}d</td>
+                  <td style={{ ...tdS, fontSize: 10, color: "#64748b" }}>{op.thb}</td>
+                  <td style={{ ...tdS, fontWeight: 600 }}>{fmt(op.eur)}</td>
+                  <td style={{ ...tdS, fontWeight: 600, background: i % 2 === 0 ? COLORS.holafly.bg + "66" : COLORS.holafly.bg + "33" }}>{hfMatch ? <span>{fmt(hfMatch[1])} <span style={{ fontSize: 9, color: "#94a3b8" }}>({hfMatch[0]}d)</span></span> : "\u2014"}</td>
+                  <td style={tdS}>{delta !== null ? <DeltaBadge value={delta} /> : "\u2014"}</td>
+                  <td style={tdS}><FrictionBadge level={op.friction} /></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ fontSize: 10, color: "#94a3b8", marginBottom: 20, fontStyle: "italic", fontFamily: FONT }}>{"Delta = (Holafly - Local) / Local \u00D7 100. Purple border = unlimited. FX: 1\u20AC = " + FX_THB + " THB."}</div>
+      <PriceCurveChart t={t} showLocal={true} />
+      <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "16px 20px", marginBottom: 20, fontFamily: FONT }}>
+        <h3 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", margin: "0 0 10px 0" }}>{t.localRisks}</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: "#dc2626", textTransform: "uppercase", marginBottom: 8 }}>Risks</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7, marginBottom: 8 }}>{t.localRisk1}</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7 }}>{t.localRisk2}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: "#059669", textTransform: "uppercase", marginBottom: 8 }}>Opportunities</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7, marginBottom: 8 }}>{t.localOpp1}</div>
+            <div style={{ fontSize: 11, color: "#475569", lineHeight: 1.7 }}>{t.localOpp2}</div>
+          </div>
+        </div>
+      </div>
+      <MethodNotes t={t} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// SHARED: PPD CHART
+// ═══════════════════════════════════════════
+
+const COMP_STYLES = {
+  airalo: { color: COLORS.airalo.primary, dash: "none", label: "Airalo (3GB/d)" },
+  saily: { color: "#B8A000", dash: "8,4", label: "Saily (5GB/d)" },
+  nomad: { color: COLORS.nomad.primary, dash: "4,3", label: "Nomad (2GB/d)" },
+  yesim: { color: COLORS.yesim.primary, dash: "2,3", label: "Yesim (no FUP)" },
+};
+const LOCAL_CHART = {
+  "AIS": { color: COLORS.ais.primary, dash: "3,2", label: "AIS (local)" },
+  "TrueMove H": { color: COLORS.truemove.primary, dash: "6,3", label: "TrueMove H" },
+  "dtac": { color: COLORS.dtac.primary, dash: "4,2", label: "dtac" },
+};
+
+function PriceCurveChart({ t, showLocal }) {
+  const W = 720, H = 320, PAD = { top: 30, right: 155, bottom: 40, left: 55 };
+  const pW = W-PAD.left-PAD.right, pH = H-PAD.top-PAD.bottom;
+  const hfD = HOLAFLY.map(([d, e]) => ({ days: d, ppd: calcPpd(e, d) }));
+  const cL = {}; Object.entries(UNLIMITED).forEach(([b, pl]) => { if (COMP_STYLES[b]) cL[b] = pl.map(p => ({ days: p.days, ppd: calcPpd(p.eur, p.days) })).sort((a, b2) => a.days - b2.days); });
+  const lL = {};
+  if (showLocal) { LOCAL_OPS.forEach(op => { if (op.dataGb !== "Unlimited") return; const s = LOCAL_CHART[op.provider]; if (!s) return; if (!lL[op.provider]) lL[op.provider] = []; if (!lL[op.provider].find(d => d.days === op.validity)) lL[op.provider].push({ days: op.validity, ppd: calcPpd(op.eur, op.validity) }); }); Object.values(lL).forEach(a => a.sort((x, y) => x.days - y.days)); }
+  const allP = [...hfD.map(d => d.ppd), ...Object.values(cL).flatMap(l => l.map(d => d.ppd)), ...Object.values(lL).flatMap(l => l.map(d => d.ppd))];
+  const mxD = Math.max(...hfD.map(d => d.days)), mxP = Math.max(...allP) * 1.1;
+  const x = d => PAD.left + (d/mxD)*pW, y = p => PAD.top + pH - (p/mxP)*pH;
+  const poly = data => data.map(d => x(d.days).toFixed(1)+","+y(d.ppd).toFixed(1)).join(" ");
+  const gL = [0,1,2,3,4,5,6].map(i => mxP*i/6).filter(v => v <= mxP);
+  const dT = [1,5,10,15,20,30,45,60,90].filter(d => d <= mxD);
+  const legend = [{ label: "Holafly (12GB/d)", color: COLORS.holafly.primary, dash: "" }, ...Object.entries(COMP_STYLES).map(([,s]) => s), ...(showLocal ? Object.entries(LOCAL_CHART).map(([,s]) => s) : [])];
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", marginBottom: 4, fontFamily: FONT }}>{t.ppdTitle}</h3>
+      <div style={{ fontSize: 10, color: "#64748b", marginBottom: 10, fontFamily: FONT }}>{t.ppdSubtitle}</div>
+      <div style={{ overflowX: "auto" }}>
+        <svg viewBox={"0 0 "+W+" "+H} style={{ width: "100%", maxWidth: W, background: "#fafafa", borderRadius: 8, border: "1px solid #e2e8f0" }}>
+          {gL.map((v, i) => <g key={i}><line x1={PAD.left} y1={y(v)} x2={W-PAD.right} y2={y(v)} stroke="#e2e8f0" strokeWidth={0.5} /><text x={PAD.left-6} y={y(v)+3} textAnchor="end" fontSize={9} fill="#94a3b8" fontFamily={FONT}>{"\u20AC"}{v.toFixed(2)}</text></g>)}
+          {dT.map(d => <text key={d} x={x(d)} y={H-10} textAnchor="middle" fontSize={9} fill="#94a3b8" fontFamily={FONT}>{d}d</text>)}
+          <polyline points={poly(hfD)} fill="none" stroke={COLORS.holafly.primary} strokeWidth={2.5} />
+          {Object.entries(cL).map(([b, data]) => { const s = COMP_STYLES[b]; return <polyline key={b} points={poly(data)} fill="none" stroke={s.color} strokeWidth={1.5} strokeDasharray={s.dash} />; })}
+          {Object.entries(cL).map(([b, data]) => data.map((d, i) => <circle key={b+"-"+i} cx={x(d.days)} cy={y(d.ppd)} r={3} fill={COMP_STYLES[b].color} />))}
+          {showLocal && Object.entries(lL).map(([prov, data]) => { const s = LOCAL_CHART[prov]; return <g key={prov}><polyline points={poly(data)} fill="none" stroke={s.color} strokeWidth={1.5} strokeDasharray={s.dash} />{data.map((d, i) => <circle key={i} cx={x(d.days)} cy={y(d.ppd)} r={3} fill={s.color} />)}</g>; })}
+          {legend.map((item, i) => <g key={i} transform={"translate("+(W-PAD.right+12)+", "+(PAD.top+i*16)+")"}><line x1={0} y1={4} x2={18} y2={4} stroke={item.color} strokeWidth={2} strokeDasharray={item.dash || "none"} /><text x={22} y={7} fontSize={9} fill="#475569" fontFamily={FONT}>{item.label}</text></g>)}
+          <text x={PAD.left+pW/2} y={H} textAnchor="middle" fontSize={10} fill="#64748b" fontFamily={FONT}>Duration (days)</text>
+          <text x={12} y={PAD.top+pH/2} textAnchor="middle" fontSize={10} fill="#64748b" fontFamily={FONT} transform={"rotate(-90, 12, "+(PAD.top+pH/2)+")"}>{"\u20AC/day"}</text>
+        </svg>
+      </div>
+      <div style={{ fontSize: 10, color: "#64748b", marginTop: 8, fontFamily: FONT, lineHeight: 1.5 }}>{t.ppdFooter}</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// SHARED: METHOD NOTES
+// ═══════════════════════════════════════════
+
+function MethodNotes({ t }) {
+  return (
+    <div style={{ padding: 14, background: "#f8fafc", borderRadius: 8, border: "1px solid #e2e8f0", fontFamily: FONT }}>
+      <div style={{ fontSize: 10, fontWeight: 600, color: "#475569", marginBottom: 4 }}>{t.methodTitle}</div>
+      <div style={{ fontSize: 10, color: "#64748b", lineHeight: 1.6 }}>{t.methodBody.map((line, i) => <span key={i}>{i > 0 && <br />}{"\u2022"} {line}</span>)}</div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// MAIN
+// ═══════════════════════════════════════════
+
+function App() {
+  const [activeTab, setActiveTab] = useState("overview");
+  const [lang, setLang] = useState("en");
+  const t = T[lang];
+  const tabs = [
+    { id: "overview", label: t.tabOverview },
+    { id: "global", label: t.tabGlobal },
+    { id: "local", label: t.tabLocal },
+  ];
+  return (
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px", background: "#fafafa", fontFamily: FONT }}>
+      <div style={{ marginBottom: 4, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: 1.5, color: COLORS.holafly.primary, textTransform: "uppercase", marginBottom: 4 }}>Exp-Pric-006 {"\u00B7"} Competitive Intelligence</div>
+          <h1 style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: -0.3 }}>Thailand eSIM: Complete Competitive Landscape</h1>
+        </div>
+        <button onClick={() => setLang(lang === "en" ? "es" : "en")} style={{ fontSize: 10, fontWeight: 600, color: "#475569", background: "#fff", border: "1px solid #e2e8f0", borderRadius: 6, padding: "6px 12px", cursor: "pointer", fontFamily: FONT, whiteSpace: "nowrap", marginTop: 4 }}>
+          {lang === "en" ? "ES \uD83C\uDDEA\uD83C\uDDF8" : "EN \uD83C\uDDEC\uD83C\uDDE7"}
+        </button>
+      </div>
+      <div style={{ fontSize: 10, color: "#94a3b8", marginBottom: 16, fontFamily: FONT }}>{t.fxNote}</div>
+      <div style={{ display: "flex", gap: 4, marginBottom: 20 }}>
+        {tabs.map(tab => {
+          const a = tab.id === activeTab;
+          return <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: "8px 16px", border: "1px solid " + (a ? "#0f172a" : "#e2e8f0"), borderRadius: 6, cursor: "pointer", fontFamily: FONT, fontSize: 11, fontWeight: a ? 700 : 500, background: a ? "#0f172a" : "#fff", color: a ? "#fff" : "#475569", transition: "all 0.15s ease" }}>{tab.label}</button>;
+        })}
+      </div>
+      {activeTab === "overview" && <OverviewTab t={t} />}
+      {activeTab === "global" && <GlobalTab t={t} />}
+      {activeTab === "local" && <LocalTab t={t} />}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>
